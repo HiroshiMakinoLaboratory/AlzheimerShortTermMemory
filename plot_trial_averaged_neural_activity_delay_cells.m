@@ -222,7 +222,8 @@ for animal_num = 1:numel(activity)
 
         % Concatenate.
         for region_num = 1:8
-            for trial_type = 1:8trial_aver_corr_incorr_resp_left_delay_cell_session{region_num}{trial_type} = [trial_aver_corr_incorr_resp_left_delay_cell_session{region_num}{trial_type};trial_averaged_correct_incorrect_resp_left_delay_cell{region_num}{trial_type}];
+            for trial_type = 1:8
+                trial_aver_corr_incorr_resp_left_delay_cell_session{region_num}{trial_type} = [trial_aver_corr_incorr_resp_left_delay_cell_session{region_num}{trial_type};trial_averaged_correct_incorrect_resp_left_delay_cell{region_num}{trial_type}];
                 trial_aver_corr_incorr_resp_right_delay_cell_session{region_num}{trial_type} = [trial_aver_corr_incorr_resp_right_delay_cell_session{region_num}{trial_type};trial_averaged_correct_incorrect_resp_right_delay_cell{region_num}{trial_type}];
                 trial_aver_corr_resp_left_delay_cell_session{region_num}{trial_type} = [trial_aver_corr_resp_left_delay_cell_session{region_num}{trial_type};trial_averaged_correct_resp_left_delay_cell{region_num}{trial_type}];
                 trial_aver_corr_resp_right_delay_cell_session{region_num}{trial_type} = [trial_aver_corr_resp_right_delay_cell_session{region_num}{trial_type};trial_averaged_correct_resp_right_delay_cell{region_num}{trial_type}];
