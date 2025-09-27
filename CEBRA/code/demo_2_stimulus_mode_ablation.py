@@ -42,10 +42,10 @@ def get_stimulus_mode_args():
                 arg_config["type"] = type(v)
             parser.add_argument(f"--{k}", **arg_config)
 
-    # Parse the arguments
+    # parse the arguments
     args = parser.parse_args()
 
-    # Convert boolean arguments back to Python bool
+    # convert boolean arguments back to Python bool
     for k, v in ops0.items():
         if isinstance(v, bool):
             setattr(args, k, args.__dict__[k] == "True")

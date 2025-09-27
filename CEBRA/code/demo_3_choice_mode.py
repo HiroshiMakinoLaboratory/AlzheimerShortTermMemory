@@ -43,10 +43,10 @@ def get_choice_mode_args():
                 arg_config["type"] = type(v)
             parser.add_argument(f"--{k}", **arg_config)
 
-    # Parse the arguments
+    # parse the arguments
     args = parser.parse_args()
 
-    # Convert boolean arguments back to Python bool
+    # convert boolean arguments back to Python bool
     for k, v in ops0.items():
         if isinstance(v, bool):
             setattr(args, k, args.__dict__[k] == "True")
@@ -122,10 +122,10 @@ if __name__ == '__main__':
                     tmp_dir = temp_save_path / 'tmp'
                     tmp_file = tmp_dir / 'train_cebra_model.pt'
 
-                    # Ensure directories exist
+                    # ensure directories exist
                     tmp_dir.mkdir(parents=True, exist_ok=True)
 
-                    # If the model has been trained, load the model from the saved file, otherwise train the model.
+                    # if the model has been trained, load the model from the saved file, otherwise train the model.
                     if arglist.model_trained:
                         train_labels = np.stack(
                             [v for k, v in train_labels_set.items() if k not in {'Trial_ID', 'Trial_type'}],
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     plt.savefig(save_path_root / 'choice_mode_relative_decoding_accuracy_bar_graph.svg', format='svg')
     # plt.close()
 
-    # Perform bootstrap test to compare the average decoding accuracy between control and APP mice
+    # perform bootstrap test to compare the average decoding accuracy between control and APP mice
     p_value_decoding_accuracy_average = {'early': [], 'middle': [], 'late': []}
     for distractor_type in ['early', 'middle', 'late']:
         p_value_decoding_accuracy_average[distractor_type] = one_tailed_bootstrap(decoding_accuracy_average_summary['control'][distractor_type], decoding_accuracy_average_summary['APP'][distractor_type], iterations=1000, direction='greater')

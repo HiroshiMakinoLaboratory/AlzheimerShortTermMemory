@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import pickle as pkl
 import os
-from .utils import *
+from FORCE.utils import *
 
 class RNN:
 	"""
@@ -259,8 +259,6 @@ class RNN:
 				# Sample stim amplitude from normal distribution
 				stochastic_stim_amp = rng.normal(stim_amp, stim_std)
 
-			stochastic_stim_amp = rng.normal(stim_amp, stim_std)
-
 			act = self.p[f'{trial_type}_activities']
 			tgt_fn = self.p[f'target_fn_{trial_type}']
 
@@ -276,7 +274,7 @@ class RNN:
 				r = self.activation(x)
 
 				r_t[:,t] = r.flatten()
-			MSE_for_r = np.mean(np.square(r - inputs['orig']), axis=1)
+			MSE_for_r = np.mean(np.square(r_t - inputs['orig']), axis=1)
 			losses_r[trial_type] = MSE_for_r
 
 			print(f'Trial {trial_type} | MSE of r: {np.mean(MSE_for_r)}')
@@ -289,6 +287,7 @@ class RNN:
 			self.plot_readouts(trial_types, ground_truth_for_r, readouts_r, 'r_t')
 		
 		print('Done.')
+
 
 	def plot_readouts(self, 
 					  trial_types, 
@@ -398,12 +397,12 @@ class RNN:
 				"Internal" - randomly mask the synapses within ALM units with zeroes
 				"External" - randomly mask all the synapses with zeros
 			'''
-			J = self.weights['rec']
+			J = self.weights['rec'].copy()
 			num_units = self.p['batch_size']
 			if ablation_type == 'external':
 				# Upper and Lower external synapses
-				upper_J = J[:-128, -128:]
-				lower_J = J[-128:, :-128]
+				upper_J = J[:-128, -128:].copy()
+				lower_J = J[-128:, :-128].copy()
 				# Total number of external synapses available
 				synap_count = np.product(upper_J.shape) + np.product(lower_J.shape)
 				# number of ablated external synapses
@@ -418,8 +417,8 @@ class RNN:
 				# ablation
 				upper_J *= upper_ablation_bool.astype('bool')
 				lower_J *= lower_ablation_bool.astype('bool')
-				J[:-128, -128:] = upper_J
-				J[-128:, :-128] = lower_J
+				J[:-128, -128:] = upper_J.copy()
+				J[-128:, :-128] = lower_J.copy()
 				print('Weights ablated.')
 
 			elif ablation_type == 'internal': 
@@ -520,6 +519,118 @@ class RNN:
 			filename = os.path.join(save_mat_path, f'connectivity_matrix_{m}.mat')
 			#print(self.weights['rec'])
 
+	def distract_individual_region(self,
+				trial_types=['L', 'R', 'L_pos'],
+				distractor_amp=1.0,
+				distractor_std=0.1,
+				stim_std=0.1,
+				ablation_proportion=0.0, 
+				number_of_ablation_trials=3,
+				number_of_distraction_trials=100, 
+				savedir=None,
+				ablation_type='internal',
+				distractor_type='early',
+				distractor_duration=0.5):
+		'''
+            Generate readouts of each RNN units given trial type, in the presence of distractor.
+        '''
+        ###################################################
+		def ablation_single_region(ablation_type, ablation_proportion, ablation_rng, region_id):
+			'''
+				Silence the synapses with specified proportion (value between 0 to 1).
+				"External" - randomly mask 20% the synapses with zeros for the specified region.
+			'''
+			J = self.weights['rec'].copy()
+			num_units = self.p['batch_size']
+
+			if ablation_type == 'all':
+				# Upper external synapses
+				region_start = region_id * 128
+				region_end = region_start + 128
+				upper_J = J[region_start:region_end, :].copy()
+				upper_J = upper_J * (1-ablation_proportion)
+				# print(J[0:4,0:4])
+				# print(upper_J[0:4,0:4])
+				J[region_start:region_end, :] = upper_J.copy()
+
+
+			# Update
+			self.weights['rec'] = J.copy()
+        #########################################################
+
+        # L_pos refers to L trial distracted with positive distractor
+		
+		for region_id in range(8):
+			rng = npr.default_rng(11)
+			abl_rng = npr.default_rng(101)
+			print(f'Ablation for region {region_id}...')
+			for m in range(number_of_ablation_trials):
+				readouts_r = {'L':[], 'R':[], 'L_pos':[]}
+				self.load_weights()			# load trained weights
+				ablation_single_region(ablation_type, ablation_proportion, abl_rng, region_id)
+				for n in range(number_of_distraction_trials):
+					ramp_slp = self.p['ramping_slope']
+					if ramp_slp == 0:
+						stochastic_ramping_slp = 0.0
+					else:
+						stochastic_ramping_slp = rng.normal(ramp_slp, 0.05)
+
+					for trial_type in trial_types:
+						
+						self.reset(reset_activity=True, reset_weights=False)
+						rnn_size = self.p['network_size']
+						loss = []
+						
+						if trial_type == 'L':
+							stim_amp = self.p[f'stim_amplitude_L']
+							if stim_amp == 0:
+								stochastic_stim_amp = 0.0
+							else:
+								stochastic_stim_amp = rng.normal(stim_amp, stim_std * 0.1)
+							# Store the stimulus amplitude for L pos trial.
+							stored_stim_L = stochastic_stim_amp
+							stochastic_dist_amp = None
+							act = self.p['L_activities']
+
+						elif trial_type == 'L_pos':
+							stochastic_stim_amp = stored_stim_L
+							stochastic_dist_amp = rng.normal(distractor_amp, distractor_std)
+							act = self.p['L_activities']
+
+						else:
+							stim_amp = self.p[f'stim_amplitude_R']
+							stochastic_stim_amp = rng.normal(stim_amp, stim_std)
+							stochastic_dist_amp = None
+							act = self.p['R_activities']
+						
+						print(f'Stim: {stochastic_stim_amp}\nRamp: {stochastic_ramping_slp}\nDist: {stochastic_dist_amp}')
+						inputs = prepare_ext_inputs(act, None, stochastic_stim_amp, stochastic_ramping_slp, stochastic_dist_amp, distractor_type, distractor_duration)
+
+						timelen = inputs['stim'].shape[1]
+						r_t = np.zeros((rnn_size, timelen))
+
+						print(f'Generating readouts of {trial_type} licking trial...')
+						for t in range(timelen):
+							x, z = self.run(inputs, t)
+							r = self.activation(x)
+
+							r_t[:,t] = r.flatten()
+						readouts_r[trial_type].append(r_t)
+
+					print(f'Trial {n+1} Readouts generated.')
+					
+				if savedir is None:
+					save_mat_path = os.getcwd()
+				else:
+					save_mat_path =  os.path.join(savedir, f'region_{region_id}')
+				if os.path.exists(save_mat_path) is False:
+					os.mkdir(save_mat_path)
+				save_readouts(readouts_r, save_mat_path,
+								f'{number_of_distraction_trials}_distracted_trials_with_{ablation_proportion}_{ablation_type}_ablation_{m}.mat')
+
+				filename = os.path.join(save_mat_path, f'connectivity_matrix_{m}.mat')
+	
+	
 
 if __name__ == '__main__':
 	net = RNN(create_parameters())

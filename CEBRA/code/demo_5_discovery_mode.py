@@ -2,13 +2,13 @@ import mat73
 import argparse
 import numpy as np
 import cebra
-from stimulus_mode_functions.combine_all_trials_all_brain_regions import dataset_all_sessions, stimulus_sampled_population
-from stimulus_mode_functions.split_dataset import split_train_test_data,  k_fold_split_data
-from stimulus_mode_functions.model import cebra_model_function, hyperparameter_search
-from stimulus_mode_functions.plot_functions import plot_embedding, plot_distractor_trials_decoding_accuracy, plot_bar_panel_control_vs_app_mice_decoding_accuracy
-from stimulus_mode_functions.decoder_functions import knn_decoder_function, knn_decoder_distractor
-from stimulus_mode_functions.default_ops import default_ops
-from stimulus_mode_functions.bootstrap import one_tailed_bootstrap
+from discovery_mode_functions.combine_all_trials_all_brain_regions import dataset_all_sessions, discovery_sampled_population
+from discovery_mode_functions.split_dataset import split_train_test_data,  k_fold_split_data
+from discovery_mode_functions.model import cebra_model_function, hyperparameter_search
+from discovery_mode_functions.plot_functions import plot_embedding, plot_decoding_accuracy, plot_distractor_trials_decoding_accuracy, plot_bar_panel_control_vs_app_mice_decoding_accuracy
+from discovery_mode_functions.decoder_functions import knn_decoder_function, knn_decoder_distractor
+from discovery_mode_functions.default_ops import default_ops
+from discovery_mode_functions.bootstrap import one_tailed_bootstrap
 from statsmodels.stats.multitest import multipletests
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -17,8 +17,8 @@ matplotlib.use('TkAgg')
 
 
 # parse arguments
-def get_stimulus_mode_args():
-    parser = argparse.ArgumentParser(description='stimulus mode')
+def get_discovery_mode_args():
+    parser = argparse.ArgumentParser(description='discovery mode')
 
     # load default arguments
     ops0 = default_ops()
@@ -59,7 +59,7 @@ def get_stimulus_mode_args():
 
 
 if __name__ == '__main__':
-    arglist = get_stimulus_mode_args()
+    arglist = get_discovery_mode_args()
 
     # create a folder to save figures
     save_path_root = arglist.root_path / "figures"
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         all_subjects_data, all_subjects_label = dataset_all_sessions(neural_activity, cell_index, arglist, mice_type=mice)
 
         for i, seed_num in enumerate(seed_array):
-            data_seed, label_seed, _ = stimulus_sampled_population(all_subjects_data, all_subjects_label, seed_num, arglist)
+            data_seed, label_seed, _ = discovery_sampled_population(all_subjects_data, all_subjects_label, seed_num, arglist)
             distractor_embedding = {'early': [], 'middle': [], 'late': []}
 
             for key in data_seed.keys():
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
                         # train the model on the training dataset
                         train_labels = np.stack([v for k, v in train_labels_set.items() if k not in {'Trial_ID', 'Trial_type'}], axis=1)
-                        cebra_model.fit(train_datas_set, train_labels)
+                        cebra_model.fit(train_datas_set)
                         cebra_model.save(tmp_file)
                         cebra.plot_loss(cebra_model)
                         plt.savefig(temp_save_path / 'control_cebra_loss.svg')
@@ -153,7 +153,7 @@ if __name__ == '__main__':
                     embedding_seeds[mice][seed_num]['train']['label'] = train_labels_set
                     embedding_seeds[mice][seed_num]['test']['label'] = test_labels_set
 
-                    # decode left and right stimulus for train and test datasets
+                    # decode left and right discovery for train and test datasets
                     train_decoding_accuracy, test_decoding_accuracy, KNN_decoder = knn_decoder_function(train_embedding, train_labels_set, test_embedding, test_labels_set, arglist, K_num=arglist.K_num)
                     decoding_accuracy_summary[mice]['train'].append(train_decoding_accuracy)
                     decoding_accuracy_summary[mice]['test'].append(test_decoding_accuracy)
@@ -185,7 +185,7 @@ if __name__ == '__main__':
         ax = plot_embedding(ax, embedding_seeds[mice][seed_num]['middle']['embedding'], embedding_seeds[mice][seed_num]['middle']['label'], 'middle', mice)
         ax = fig1.add_subplot(2, 4, fig_id+4, projection='3d')
         ax = plot_embedding(ax, embedding_seeds[mice][seed_num]['late']['embedding'], embedding_seeds[mice][seed_num]['late']['label'], 'late', mice)
-    plt.savefig(save_path_root / 'stimulus_mode_neural_embedding_examples.svg', format='svg')
+    plt.savefig(save_path_root / 'discovery_mode_neural_embedding_examples.svg', format='svg')
     # plt.close()
 
     # plot relative decoding accuracy
@@ -198,17 +198,17 @@ if __name__ == '__main__':
         decoding_accuracy_late = np.array(decoding_accuracy_summary[mice]['late']) - np.array(decoding_accuracy_summary[mice]['test'])
         ax = plot_distractor_trials_decoding_accuracy(ax, arglist, decoding_accuracy_early, decoding_accuracy_middle, decoding_accuracy_late, len(seed_array), mice)
         fig_id += 1
-    plt.savefig(save_path_root / 'stimulus_mode_relative_decoding_accuracy.svg', format='svg')
+    plt.savefig(save_path_root / 'discovery_mode_relative_decoding_accuracy.svg', format='svg')
     # plt.close()
 
     # bar plot of relative decoding accuracy
     fig3 = plt.figure(figsize=(6, 4))
     ax = fig3.add_subplot(111)
     ax = plot_bar_panel_control_vs_app_mice_decoding_accuracy(ax, decoding_accuracy_average_summary['control'], decoding_accuracy_average_summary['APP'])
-    plt.savefig(save_path_root / 'stimulus_mode_relative_decoding_accuracy_bar_graph.svg', format='svg', dpi=600)
+    plt.savefig(save_path_root / 'discovery_mode_relative_decoding_accuracy_bar_graph.svg', format='svg', dpi=600)
     # plt.close()
 
-    # Perform bootstrap test to compare the average decoding accuracy between control and APP mice
+    # perform bootstrap test to compare the average decoding accuracy between control and APP mice
     p_value_decoding_accuracy_average = {'early': [], 'middle': [], 'late': []}
     for distractor_type in ['early', 'middle', 'late']:
         p_value_decoding_accuracy_average[distractor_type] = one_tailed_bootstrap(decoding_accuracy_average_summary['control'][distractor_type], decoding_accuracy_average_summary['APP'][distractor_type], iterations=1000, direction='greater')
@@ -220,6 +220,16 @@ if __name__ == '__main__':
     # display p-value
     print('FDR corrected p value (early, middle, late):', fdr_corrected_p_value_decoding_accuracy_average)
 
+    # plot relative decoding accuracy
+    for mice in arglist.mice_type:
+        decoding_accuracy_train = np.array(decoding_accuracy_summary[mice]['train'])
+        decoding_accuracy_test = np.array(decoding_accuracy_summary[mice]['test'])
+        fig5 = plt.figure(figsize=(4, 4), constrained_layout=True)
+        ax = fig5.add_subplot(111)
+        ax = plot_decoding_accuracy(ax, arglist, decoding_accuracy_train, decoding_accuracy_test, mice)
+        plt.savefig(save_path_root / f'{mice}_discovery_mode_relative_decoding_accuracy.svg', format='svg')
+        #plt.close()
 
     # show the plot
     plt.show()
+

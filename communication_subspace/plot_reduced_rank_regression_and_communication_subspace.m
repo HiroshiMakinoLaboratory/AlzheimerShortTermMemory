@@ -230,6 +230,51 @@ ylabel('');
 axis off
 colormap('parula')
 
+% Statistics.
+rng(0)
+for source = 1:8
+    for target = 1:8
+        opt_dim_control_no_nan{source}{target} = opt_dim_control{source}{target}(~isnan(opt_dim_control{source}{target}));
+        opt_dim_APP_no_nan{source}{target} = opt_dim_APP{source}{target}(~isnan(opt_dim_APP{source}{target}));
+
+        % Bootstrap.
+        for shuffle_num = 1:1000
+            for session_num = 1:numel(opt_dim_control_no_nan{source}{target})
+                sampled_opt_dim_control_no_nan{source}{target}(shuffle_num,session_num) = opt_dim_control_no_nan{source}{target}(randi(numel(opt_dim_control_no_nan{source}{target})));
+            end
+            for session_num = 1:numel(opt_dim_APP_no_nan{source}{target})
+                sampled_opt_dim_APP_no_nan{source}{target}(shuffle_num,session_num) = opt_dim_APP_no_nan{source}{target}(randi(numel(opt_dim_APP_no_nan{source}{target})));
+            end
+        end
+        p_value(source,target) = sum(mean(sampled_opt_dim_control_no_nan{source}{target},2) > mean(sampled_opt_dim_APP_no_nan{source}{target},2))/1000;
+    end
+end
+
+% False discovery rate.
+[val,idx] = sort(p_value(:));
+adjusted_p_value_005 = ((1:numel(p_value(:)))*0.05)/numel(p_value(:));
+adjusted_p_value_001 = ((1:numel(p_value(:)))*0.01)/numel(p_value(:));
+adjusted_p_value_0001 = ((1:numel(p_value(:)))*0.001)/numel(p_value(:));
+significant_comparison_idx_005 = idx(val < adjusted_p_value_005');
+significant_comparison_idx_001 = idx(val < adjusted_p_value_001');
+significant_comparison_idx_0001 = idx(val < adjusted_p_value_0001');
+
+vector = zeros(numel(p_value(:)),1);
+vector(significant_comparison_idx_005) = 1;
+vector(significant_comparison_idx_001) = 2;
+vector(significant_comparison_idx_0001) = 3;
+
+p_value_matrix = reshape(vector,[8,8]);
+
+% Plot.
+figure('Position',[1100,800,200,200],'Color','w')
+imagesc(p_value_matrix,[0,3])
+axis square
+xlabel('');
+ylabel('');
+axis off
+colormap([linspace(0,1,64)',linspace(0,1,64)',linspace(0,1,64)'])
+
 intra_opt_dim_control = diag(mean_opt_dim_control);
 intra_opt_dim_APP = diag(mean_opt_dim_APP);
 inter_opt_dim_control = mean_opt_dim_control;
@@ -241,7 +286,7 @@ end
 inter_opt_dim_control = inter_opt_dim_control(~isnan(inter_opt_dim_control));
 inter_opt_dim_APP = inter_opt_dim_APP(~isnan(inter_opt_dim_APP));
 
-figure('Position',[1100,800,200,200],'Color','w')
+figure('Position',[1300,800,200,200],'Color','w')
 hold on
 plot(intra_opt_dim_control,intra_opt_dim_APP,'+','MarkerSize',6,'Color',[0.25,0.25,0.25],'LineWidth',2.5)
 plot(inter_opt_dim_control,inter_opt_dim_APP,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')

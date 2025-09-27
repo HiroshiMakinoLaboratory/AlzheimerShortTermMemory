@@ -23,3 +23,8 @@ python training.py
 ```
 python distract.py
 ```
+
+5. Individual region ablation
+```
+python distract_individual_region_ablation.py
+```

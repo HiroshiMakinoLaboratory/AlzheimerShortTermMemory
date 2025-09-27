@@ -47,66 +47,66 @@ def create_hyperparameters(data_path, save_path, *args):
 			'batch_size': 1024
 			}
   
-	data = loadmat(data_path)
-	key = 'trial_averaged_correct_response'
-	for region_num in range(8):
-		L, R = data[key].squeeze()[region_num].squeeze()[0], data[key].squeeze()[region_num].squeeze()[1]
-		L, R = L*5, R*5
-		L, R = np.append(L,L, axis=0), np.append(R,R, axis=0)
+		data = loadmat(data_path)
+		key = 'trial_averaged_correct_response'
+		for region_num in range(8):
+			L, R = data[key].squeeze()[region_num].squeeze()[0], data[key].squeeze()[region_num].squeeze()[1]
+			L, R = L*5, R*5
+			L, R = np.append(L,L, axis=0), np.append(R,R, axis=0)
 
-	# To get std threshold across all neurons across all regions
-	concatenated_LR = np.hstack((L, R))
-	std_threshold = (2 *np.std(concatenated_LR))
-  
-	concat_L, concat_R  = np.zeros([p['batch_size'],L.shape[1]]), np.zeros([p['batch_size'],R.shape[1]])
-	concat_batch = np.zeros([int(p['batch_size']/8), 8])	
-	# Start sampling from each region
-	for region_num in range(8):
-		L, R = data[key].squeeze()[region_num].squeeze()[0], data[key].squeeze()[region_num].squeeze()[1]
-		L, R = L*5, R*5
-
-		print(f'Total # cells: {L.shape[0]}')
-
-		#Filter then clip
-		# Apply selection criteria
+		# To get std threshold across all neurons across all regions
 		concatenated_LR = np.hstack((L, R))
-		selection_criteria = concatenated_LR > std_threshold
-		passed = np.any(selection_criteria, axis=1)
-		L, R = L[passed], R[passed]
-		# Clipping and max normalization
-		L, R = normalize(L), normalize(R)
-		print(f'Selected # cells: {L.shape[0]}')
-
-		# Sample with replacement
-		rng = npr.default_rng(seed)
-		batch = rng.choice(range(len(L)), int(p['batch_size']/8), replace=True)
-		L, R = L[batch], R[batch]
-
-		concat_L[int(region_num*p['batch_size']/8) : int(region_num*p['batch_size']/8+p['batch_size']/8)] = L
-		concat_R[int(region_num*p['batch_size']/8) : int(region_num*p['batch_size']/8+p['batch_size']/8)] = R
+		std_threshold = (2 *np.std(concatenated_LR))
 	
-	L, R = concat_L, concat_R
-	# Upsample data from 9.35Hz to 93.5Hz
-	L, R = interpolating(L, 9), interpolating(R, 9)
-	# Only consider 0.5s of pre-sample epoch, 1.0s of sample epoch and 2.0s of delay epoch
-	L, R = truncate(L), truncate(R)
+		concat_L, concat_R  = np.zeros([p['batch_size'],L.shape[1]]), np.zeros([p['batch_size'],R.shape[1]])
+		concat_batch = np.zeros([int(p['batch_size']/8), 8])	
+		# Start sampling from each region
+		for region_num in range(8):
+			L, R = data[key].squeeze()[region_num].squeeze()[0], data[key].squeeze()[region_num].squeeze()[1]
+			L, R = L*5, R*5
 
-	# Apply inverse sigmoid to obtain target functions
-	inv_sig_L, inv_sig_R = inv_sigmoid(L), inv_sigmoid(R)
-	# 38/93.5 = 406ms Smoothing window
-	L, R = moving_average(L, 38), moving_average(R, 38)
-	inv_sig_L, inv_sig_R = moving_average(inv_sig_L, 38), moving_average(inv_sig_R, 38)
+			print(f'Total # cells: {L.shape[0]}')
 
-	p.update({'L_activities': L, 'R_activities': R})
-	p.update({'target_fn_L' : inv_sig_L, 'target_fn_R': inv_sig_R})
-	p.update({'network_size': L.shape[0]})
+			#Filter then clip
+			# Apply selection criteria
+			concatenated_LR = np.hstack((L, R))
+			selection_criteria = concatenated_LR > std_threshold
+			passed = np.any(selection_criteria, axis=1)
+			L, R = L[passed], R[passed]
+			# Clipping and max normalization
+			L, R = normalize(L), normalize(R)
+			print(f'Selected # cells: {L.shape[0]}')
 
-	if os.path.exists(save_path) is False:
-		os.mkdir(save_path)
-	with open(pklfile, 'wb') as f:
-		pkl.dump(p, f)
-	print('Number of RNN units: {}'.format(p['network_size']))
-	print('Hyperparameters saved.')
+			# Sample with replacement
+			rng = npr.default_rng(seed)
+			batch = rng.choice(range(len(L)), int(p['batch_size']/8), replace=True)
+			L, R = L[batch], R[batch]
+
+			concat_L[int(region_num*p['batch_size']/8) : int(region_num*p['batch_size']/8+p['batch_size']/8)] = L
+			concat_R[int(region_num*p['batch_size']/8) : int(region_num*p['batch_size']/8+p['batch_size']/8)] = R
+		
+		L, R = concat_L, concat_R
+		# Upsample data from 9.35Hz to 93.5Hz
+		L, R = interpolating(L, 9), interpolating(R, 9)
+		# Only consider 0.5s of pre-sample epoch, 1.0s of sample epoch and 2.0s of delay epoch
+		L, R = truncate(L), truncate(R)
+
+		# Apply inverse sigmoid to obtain target functions
+		inv_sig_L, inv_sig_R = inv_sigmoid(L), inv_sigmoid(R)
+		# 38/93.5 = 406ms Smoothing window
+		L, R = moving_average(L, 38), moving_average(R, 38)
+		inv_sig_L, inv_sig_R = moving_average(inv_sig_L, 38), moving_average(inv_sig_R, 38)
+
+		p.update({'L_activities': L, 'R_activities': R})
+		p.update({'target_fn_L' : inv_sig_L, 'target_fn_R': inv_sig_R})
+		p.update({'network_size': L.shape[0]})
+
+		if os.path.exists(save_path) is False:
+			os.mkdir(save_path)
+		with open(pklfile, 'wb') as f:
+			pkl.dump(p, f)
+		print('Number of RNN units: {}'.format(p['network_size']))
+		print('Hyperparameters saved.')
 	return p
 
 def interpolating(activity, n_interp_points):
