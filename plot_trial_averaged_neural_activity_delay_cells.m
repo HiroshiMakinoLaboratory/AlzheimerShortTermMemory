@@ -623,7 +623,7 @@ for region_num = 1:8
     figure('Position',[200*region_num,800,200,200],'Color','w');
     hold on
     for distractor_num = 4:-1:1
-        plot(mean_corr_incorr_resp_selectivity_delay_cell_APP{region_num}{distractor_num},'Color',[0.64,0.08,0.018,1 - (distractor_num - 1)*0.25],'LineWidth',1.5)
+        plot(mean_corr_incorr_resp_selectivity_delay_cell_APP{region_num}{distractor_num},'Color',[0.64,0.08,0.18,1 - (distractor_num - 1)*0.25],'LineWidth',1.5)
         line([1,75],[0,0],'Color',[0.25,0.25,0.25])
         line([1.*fs_image,1.*fs_image],[y_lower_limit(region_num),y_upper_limit(region_num)],'Color',[0.25,0.25,0.25])
         line([2.*fs_image,2.*fs_image],[y_lower_limit(region_num),y_upper_limit(region_num)],'Color',[0.25,0.25,0.25])
