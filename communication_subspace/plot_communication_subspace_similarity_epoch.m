@@ -192,6 +192,8 @@ bar(1,mean_mean_similarity_control,0.8,'FaceColor',[0.47,0.67,0.19],'EdgeColor',
 bar(2,mean_mean_similarity_APP,0.8,'FaceColor',[0.47,0.67,0.19],'EdgeColor','None','FaceAlpha',0.4)
 line([1,1],[mean_mean_similarity_control - se_mean_similarity_control,mean_mean_similarity_control + se_mean_similarity_control],'Color',[0.47,0.67,0.19],'LineWidth',1)
 line([2,2],[mean_mean_similarity_APP - se_mean_similarity_APP,mean_mean_similarity_APP + se_mean_similarity_APP],'Color',[0.47,0.67,0.19],'LineWidth',1)
+plot(0.8 + rand(numel(mean_similarity_control{region_num1}{region_num2}),1)/2.5,mean_similarity_control{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.47,0.67,0.19],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(mean_similarity_APP{region_num1}{region_num2}),1)/2.5,mean_similarity_APP{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.47,0.67,0.19],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Similarity');
 xlim([0,3])
@@ -387,6 +389,8 @@ bar(1,mean_mean_similarity_control,0.8,'FaceColor',[0.00,0.45,0.74],'EdgeColor',
 bar(2,mean_mean_similarity_APP,0.8,'FaceColor',[0.00,0.45,0.74],'EdgeColor','None','FaceAlpha',0.4)
 line([1,1],[mean_mean_similarity_control - se_mean_similarity_control,mean_mean_similarity_control + se_mean_similarity_control],'Color',[0.00,0.45,0.74],'LineWidth',1)
 line([2,2],[mean_mean_similarity_APP - se_mean_similarity_APP,mean_mean_similarity_APP + se_mean_similarity_APP],'Color',[0.00,0.45,0.74],'LineWidth',1)
+plot(0.8 + rand(numel(mean_similarity_control{region_num1}{region_num2}),1)/2.5,mean_similarity_control{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.00,0.45,0.74],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(mean_similarity_APP{region_num1}{region_num2}),1)/2.5,mean_similarity_APP{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.00,0.45,0.74],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Similarity');
 xlim([0,3])
@@ -582,6 +586,8 @@ bar(1,mean_mean_similarity_control,0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor',
 bar(2,mean_mean_similarity_APP,0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None','FaceAlpha',0.4)
 line([1,1],[mean_mean_similarity_control - se_mean_similarity_control,mean_mean_similarity_control + se_mean_similarity_control],'Color',[0.64,0.08,0.18],'LineWidth',1)
 line([2,2],[mean_mean_similarity_APP - se_mean_similarity_APP,mean_mean_similarity_APP + se_mean_similarity_APP],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(mean_similarity_control{region_num1}{region_num2}),1)/2.5,mean_similarity_control{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(mean_similarity_APP{region_num1}{region_num2}),1)/2.5,mean_similarity_APP{region_num1}{region_num2},'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Similarity');
 xlim([0,3])
