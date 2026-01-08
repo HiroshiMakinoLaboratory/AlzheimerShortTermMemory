@@ -42,10 +42,10 @@ for i = 1:30
 end
 
 % Plot of all weights.
-mean_all_weights_APP_RNNs = mean(APP_weights_mean);
 mean_all_weights_control_RNNs = mean(control_weights_mean);
-sem_all_weights_APP_RNNs = std(APP_weights_mean)/(numel(APP_weights_mean)^0.5);
+mean_all_weights_APP_RNNs = mean(APP_weights_mean);
 sem_all_weights_control_RNNs = std(control_weights_mean)/(numel(control_weights_mean)^0.5);
+sem_all_weights_APP_RNNs = std(APP_weights_mean)/(numel(APP_weights_mean)^0.5);
 
 figure('Position',[400,1000,200,200],'Color','w');
 hold on;
@@ -53,6 +53,8 @@ bar(1,mean_all_weights_control_RNNs,0.6,'FaceColor',[0.25,0.25,0.25],'EdgeColor'
 bar(2,mean_all_weights_APP_RNNs,0.6,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None','FaceAlpha',0.6)
 line([1,1],[mean_all_weights_control_RNNs - sem_all_weights_control_RNNs, mean_all_weights_control_RNNs + sem_all_weights_control_RNNs],'Color',[0.25,0.25,0.25],'LineWidth',1)
 line([2,2],[mean_all_weights_APP_RNNs - sem_all_weights_APP_RNNs, mean_all_weights_APP_RNNs + sem_all_weights_APP_RNNs],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(control_weights_mean),1)/2.5,control_weights_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(APP_weights_mean),1)/2.5,APP_weights_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Synaptic strength');
 xlim([0,3])
@@ -65,10 +67,10 @@ ax.XTickLabel = {'Control','APP'};
 ax.YTickLabel = {'0.055','0.060','0.065'};
 
 % Plot of positive weights.
-mean_exc_weights_APP_RNNs = mean(APP_positive_mean);
 mean_exc_weights_control_RNNs = mean(control_positive_mean);
-sem_exc_weights_APP_RNNs = std(APP_positive_mean)/(numel(APP_positive_mean)^0.5);
+mean_exc_weights_APP_RNNs = mean(APP_positive_mean);
 sem_exc_weights_control_RNNs = std(control_positive_mean)/(numel(control_positive_mean)^0.5);
+sem_exc_weights_APP_RNNs = std(APP_positive_mean)/(numel(APP_positive_mean)^0.5);
 
 figure('Position',[600,1000,200,200],'Color','w');
 hold on;
@@ -76,6 +78,8 @@ bar(1,mean_exc_weights_control_RNNs,0.6,'FaceColor',[0.25,0.25,0.25],'EdgeColor'
 bar(2,mean_exc_weights_APP_RNNs,0.6,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None','FaceAlpha',0.6)
 line([1,1],[mean_exc_weights_control_RNNs - sem_exc_weights_control_RNNs, mean_exc_weights_control_RNNs + sem_exc_weights_control_RNNs],'Color',[0.25,0.25,0.25],'LineWidth',1)
 line([2,2],[mean_exc_weights_APP_RNNs - sem_exc_weights_APP_RNNs, mean_exc_weights_APP_RNNs + sem_exc_weights_APP_RNNs],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(control_positive_mean),1)/2.5,control_positive_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(APP_positive_mean),1)/2.5,APP_positive_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Positive synaptic');
 xlim([0,3])
@@ -88,10 +92,10 @@ ax.XTickLabel = {'Control','APP'};
 ax.YTickLabel = {'0.055','0.060','0.065'};
 
 % Plot of negative weights.
-mean_inh_weights_APP_RNNs = mean(APP_negative_mean);
 mean_inh_weights_control_RNNs = mean(control_negative_mean);
-sem_inh_weights_APP_RNNs = std(APP_negative_mean)/(numel(APP_negative_mean)^0.5);
+mean_inh_weights_APP_RNNs = mean(APP_negative_mean);
 sem_inh_weights_control_RNNs = std(control_negative_mean)/(numel(control_negative_mean)^0.5);
+sem_inh_weights_APP_RNNs = std(APP_negative_mean)/(numel(APP_negative_mean)^0.5);
 
 figure('Position',[800,1000,200,200],'Color','w');
 hold on;
@@ -99,6 +103,8 @@ bar(1,mean_inh_weights_control_RNNs,0.6,'FaceColor',[0.25,0.25,0.25],'EdgeColor'
 bar(2,mean_inh_weights_APP_RNNs,0.6,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None','FaceAlpha',0.6)
 line([1,1],[mean_inh_weights_control_RNNs - sem_inh_weights_control_RNNs, mean_inh_weights_control_RNNs + sem_inh_weights_control_RNNs],'Color',[0.25,0.25,0.25],'LineWidth',1)
 line([2,2],[mean_inh_weights_APP_RNNs - sem_inh_weights_APP_RNNs, mean_inh_weights_APP_RNNs + sem_inh_weights_APP_RNNs],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(control_negative_mean),1)/2.5,control_negative_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
+plot(1.8 + rand(numel(APP_negative_mean),1)/2.5,APP_negative_mean,'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 xlabel('');
 ylabel('Negative synaptic');
 xlim([0,3])

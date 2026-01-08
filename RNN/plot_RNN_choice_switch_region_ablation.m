@@ -87,7 +87,7 @@ se_switch_trial_fraction_APP_ablation_20_percent = std(switch_trial_fraction_APP
 
 % Plot control 10% ablation.
 n = length(switch_trial_fraction_control_no_ablation);
-figure('Position',[600,1000,300,300],'Color','w');
+figure('Position',[200,1000,200,200],'Color','w');
 set(gcf,'renderer','Painters')
 hold on;
 bar(1,mean_switch_trial_fraction_control_no_ablation,0.8,'FaceColor',[0.25,0.25,0.25],'EdgeColor','None', 'FaceAlpha',0.6)
@@ -95,14 +95,15 @@ for i = 2:9
     bar(i,mean_switch_trial_fraction_control_ablation_10_percent(i-1),0.8,'FaceColor',[0.25,0.25,0.25],'EdgeColor','None', 'FaceAlpha',0.6)
 end
 line([1,1],[mean_switch_trial_fraction_control_no_ablation - se_switch_trial_fraction_control_no_ablation,mean_switch_trial_fraction_control_no_ablation + se_switch_trial_fraction_control_no_ablation],'Color',[0.25,0.25,0.25],'LineWidth',1)
+plot(0.8 + rand(numel(switch_trial_fraction_control_no_ablation),1)/2.5,switch_trial_fraction_control_no_ablation,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
 for i = 2:9
     line([i,i],[mean_switch_trial_fraction_control_ablation_10_percent(i-1) - se_switch_trial_fraction_control_ablation_10_percent(i-1), mean_switch_trial_fraction_control_ablation_10_percent(i-1) + se_switch_trial_fraction_control_ablation_10_percent(i-1)],'Color',[0.25,0.25,0.25],'LineWidth',1)
+    plot(i - 1 + 0.8 + rand(numel(switch_trial_fraction_control_ablation_10_percent(:,i-1)),1)/2.5,switch_trial_fraction_control_ablation_10_percent(:,i-1),'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
 end
-
 xlabel('');
 ylabel('Trials switched (%)');
 xlim([0,10])
-ylim([0,105])
+ylim([-5,105])
 ax = gca;
 ax.FontSize = 14;
 ax.XTick = [1,2,3,4,5,6,7,8,9];
@@ -112,7 +113,7 @@ ax.YTickLabel = {'0','50','100'};
 
 % Plot control 20% ablation.
 n = length(switch_trial_fraction_control_no_ablation);
-figure('Position',[600,1000,300,300],'Color','w');
+figure('Position',[400,1000,200,200],'Color','w');
 set(gcf,'renderer','Painters')
 hold on;
 bar(1,mean_switch_trial_fraction_control_no_ablation,0.8,'FaceColor',[0.25,0.25,0.25],'EdgeColor','None', 'FaceAlpha',0.6)
@@ -120,14 +121,15 @@ for i = 2:9
     bar(i,mean_switch_trial_fraction_control_ablation_20_percent(i-1),0.8,'FaceColor',[0.25,0.25,0.25],'EdgeColor','None', 'FaceAlpha',0.6)
 end
 line([1,1],[mean_switch_trial_fraction_control_no_ablation - se_switch_trial_fraction_control_no_ablation,mean_switch_trial_fraction_control_no_ablation + se_switch_trial_fraction_control_no_ablation],'Color',[0.25,0.25,0.25],'LineWidth',1)
+plot(0.8 + rand(numel(switch_trial_fraction_control_no_ablation),1)/2.5,switch_trial_fraction_control_no_ablation,'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
 for i = 2:9
     line([i,i],[mean_switch_trial_fraction_control_ablation_20_percent(i-1) - se_switch_trial_fraction_control_ablation_20_percent(i-1), mean_switch_trial_fraction_control_ablation_20_percent(i-1) + se_switch_trial_fraction_control_ablation_20_percent(i-1)],'Color',[0.25,0.25,0.25],'LineWidth',1)
+    plot(i - 1 + 0.8 + rand(numel(switch_trial_fraction_control_ablation_20_percent(:,i-1)),1)/2.5,switch_trial_fraction_control_ablation_20_percent(:,i-1),'o','MarkerSize',6,'MarkerFaceColor',[0.25,0.25,0.25],'MarkerEdgeColor','none')
 end
-
 xlabel('');
 ylabel('Trials switched (%)');
 xlim([0,10])
-ylim([0,105])
+ylim([-5,105])
 ax = gca;
 ax.FontSize = 14;
 ax.XTick = [1,2,3,4,5,6,7,8,9];
@@ -137,7 +139,7 @@ ax.YTickLabel = {'0','50','100'};
 
 % Plot APP 10% ablation.
 n = length(switch_trial_fraction_APP_no_ablation);
-figure('Position',[600,1000,300,300],'Color','w');
+figure('Position',[600,1000,200,200],'Color','w');
 set(gcf,'renderer','Painters')
 hold on;
 bar(1,mean_switch_trial_fraction_APP_no_ablation,0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None', 'FaceAlpha',0.6)
@@ -145,14 +147,15 @@ for i = 2:9
     bar(i,mean_switch_trial_fraction_APP_ablation_10_percent(i-1),0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None', 'FaceAlpha',0.6)
 end
 line([1,1],[mean_switch_trial_fraction_APP_no_ablation - se_switch_trial_fraction_APP_no_ablation,mean_switch_trial_fraction_APP_no_ablation + se_switch_trial_fraction_APP_no_ablation],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(switch_trial_fraction_APP_no_ablation),1)/2.5,switch_trial_fraction_APP_no_ablation,'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 for i = 2:9
     line([i,i],[mean_switch_trial_fraction_APP_ablation_10_percent(i-1) - se_switch_trial_fraction_APP_ablation_10_percent(i-1), mean_switch_trial_fraction_APP_ablation_10_percent(i-1) + se_switch_trial_fraction_APP_ablation_10_percent(i-1)],'Color',[0.64,0.08,0.18],'LineWidth',1)
+    plot(i - 1 + 0.8 + rand(numel(switch_trial_fraction_APP_ablation_10_percent(:,i-1)),1)/2.5,switch_trial_fraction_APP_ablation_10_percent(:,i-1),'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 end
-
 xlabel('');
 ylabel('Trials switched (%)');
 xlim([0,10])
-ylim([0,105])
+ylim([-5,105])
 ax = gca;
 ax.FontSize = 14;
 ax.XTick = [1,2,3,4,5,6,7,8,9];
@@ -162,7 +165,7 @@ ax.YTickLabel = {'0','50','100'};
 
 % Plot APP 20% ablation.
 n = length(switch_trial_fraction_APP_no_ablation);
-figure('Position',[600,1000,300,300],'Color','w');
+figure('Position',[800,1000,200,200],'Color','w');
 set(gcf,'renderer','Painters')
 hold on;
 bar(1,mean_switch_trial_fraction_APP_no_ablation,0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None', 'FaceAlpha',0.6)
@@ -170,14 +173,15 @@ for i = 2:9
     bar(i,mean_switch_trial_fraction_APP_ablation_20_percent(i-1),0.8,'FaceColor',[0.64,0.08,0.18],'EdgeColor','None', 'FaceAlpha',0.6)
 end
 line([1,1],[mean_switch_trial_fraction_APP_no_ablation - se_switch_trial_fraction_APP_no_ablation,mean_switch_trial_fraction_APP_no_ablation + se_switch_trial_fraction_APP_no_ablation],'Color',[0.64,0.08,0.18],'LineWidth',1)
+plot(0.8 + rand(numel(switch_trial_fraction_APP_no_ablation),1)/2.5,switch_trial_fraction_APP_no_ablation,'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 for i = 2:9
     line([i,i],[mean_switch_trial_fraction_APP_ablation_20_percent(i-1) - se_switch_trial_fraction_APP_ablation_20_percent(i-1), mean_switch_trial_fraction_APP_ablation_20_percent(i-1) + se_switch_trial_fraction_APP_ablation_20_percent(i-1)],'Color',[0.64,0.08,0.18],'LineWidth',1)
+    plot(i - 1 + 0.8 + rand(numel(switch_trial_fraction_APP_ablation_20_percent(:,i-1)),1)/2.5,switch_trial_fraction_APP_ablation_20_percent(:,i-1),'o','MarkerSize',6,'MarkerFaceColor',[0.64,0.08,0.18],'MarkerEdgeColor','none')
 end
-
 xlabel('');
 ylabel('Trials switched (%)');
 xlim([0,10])
-ylim([0,105])
+ylim([-5,105])
 ax = gca;
 ax.FontSize = 14;
 ax.XTick = [1,2,3,4,5,6,7,8,9];
